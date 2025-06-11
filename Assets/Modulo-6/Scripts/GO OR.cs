@@ -2,14 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Sphere : MonoBehaviour
+public class CuartoGO : MonoBehaviour
 {
     // Aquí conectamos los otros dos GameObjects para poder acceder a sus scripts
     [SerializeField] private GameObject Cube;
     [SerializeField] private GameObject Capsule;
-    
 
-    // Esta variable es la que usaremos para el resultado del "AND"
+    // Esta variable es la que usaremos para el resultado del "OR"
     private bool valorBooleano = false;
 
     // Necesitamos el componente Renderer para cambiar el color del objeto
@@ -18,10 +17,8 @@ public class Sphere : MonoBehaviour
     // Aquí guardamos las referencias a los scripts de los otros GameObjects
     private Cube scriptPrimero;
     private Capsule scriptSegundo;
-    
 
     void Start()
-       
     {
         // Buscamos el componente Renderer en este objeto
         rendererComponent = GetComponent<Renderer>();
@@ -47,31 +44,33 @@ public class Sphere : MonoBehaviour
     void FixedUpdate()
     {
         // Obtenemos los valores booleanos de los otros dos GameObjects
-        bool valorPrimero = false;
-        bool valorSegundo = false;
+        bool cubePrimero = false;
+        bool capsuleSegundo = false;
 
         if (scriptPrimero != null)
         {
-            valorPrimero = scriptPrimero.GetValorBooleano();
+            cubePrimero = scriptPrimero.GetValorBooleano();
         }
 
         if (scriptSegundo != null)
         {
-            valorSegundo = scriptSegundo.GetValorBooleano();
+            capsuleSegundo = scriptSegundo.GetValorBooleano();
         }
 
-        // ¡Aquí aplicamos la operación "AND"! La variable solo será verdadera si AMBAS son verdaderas
-        valorBooleano = valorPrimero && valorSegundo;
+        // ¡Aquí aplicamos la operación "OR"! La variable será verdadera si AL MENOS UNA es verdadera
+        valorBooleano = cubePrimero || capsuleSegundo;
 
-        // Cambiamos el color del objeto según el resultado del "AND"
+        // Cambiamos el color del objeto según el resultado del "OR"
         if (rendererComponent != null)
         {
             rendererComponent.sharedMaterial.color = valorBooleano ? Color.white : Color.black;
         }
 
         // Imprimimos los valores en la consola para ver qué está pasando (opcional)
-        Debug.Log($"Cube: {valorPrimero}, Capsule: {valorSegundo}, Sphere (AND): {valorBooleano}");
+        Debug.Log($"Primer GO: {cubePrimero}, Segundo GO: {capsuleSegundo}, Cuarto GO (OR): {valorBooleano}");
     }
+
+    // Este método permite que otros scripts pregunten cuál es el valor actual de la variable booleana
     public bool GetValorBooleano()
     {
         return valorBooleano;
